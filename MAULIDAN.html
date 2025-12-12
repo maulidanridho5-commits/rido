@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Mahasiswa</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --accent: #22d3ee;
+      --accent-2: #a78bfa;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f87171;
+      --success: #34d399;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(34, 211, 238, 0.15), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(167, 139, 250, 0.18), transparent 28%),
+                  var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .shell {
+      width: min(1100px, 100%);
+      background: linear-gradient(135deg, rgba(34, 211, 238, 0.08), rgba(167, 139, 250, 0.08));
+      padding: 2px;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      animation: float 12s ease-in-out infinite;
+    }
+
+    .app {
+      background: var(--panel);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: -30% 50%;
+      width: 60%;
+      transform: translateX(-50%) rotate(25deg);
+      background: linear-gradient(120deg, rgba(34, 211, 238, 0.08), rgba(167, 139, 250, 0.1));
+      filter: blur(24px);
+      pointer-events: none;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    h1 {
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: rgba(34, 211, 238, 0.08);
+      border: 1px solid rgba(34, 211, 238, 0.2);
+      color: var(--accent);
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(34, 211, 238, 0.25);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+    }
+
+    form {
+      display: grid;
+      gap: 10px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--text);
+      transition: border-color 160ms ease, transform 160ms ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: rgba(34, 211, 238, 0.6);
+      transform: translateY(-1px);
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: var(--bg);
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow: 0 12px 30px rgba(34, 211, 238, 0.24);
+      transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 14px 34px rgba(34, 211, 238, 0.28);
+      filter: brightness(1.03);
+    }
+
+    button:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .muted-btn {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      box-shadow: none;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .muted-btn:hover {
+      border-color: rgba(34, 211, 238, 0.2);
+    }
+
+    .table-wrap {
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 640px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      user-select: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    th span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    th .sort-indicator {
+      font-size: 12px;
+      color: var(--accent);
+      opacity: 0;
+      transition: opacity 120ms ease;
+    }
+
+    th.active .sort-indicator {
+      opacity: 1;
+    }
+
+    tr {
+      background: rgba(255, 255, 255, 0.01);
+      transition: background 160ms ease, transform 180ms ease;
+    }
+
+    tbody tr:hover {
+      background: rgba(34, 211, 238, 0.06);
+      transform: translateX(2px);
+    }
+
+    td .actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(52, 211, 153, 0.12);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.25);
+    }
+
+    .danger {
+      color: var(--danger);
+    }
+
+    .status {
+      font-size: 14px;
+      margin-top: 6px;
+      color: var(--muted);
+      min-height: 18px;
+    }
+
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      backdrop-filter: blur(6px);
+      background: rgba(15, 23, 42, 0.75);
+      z-index: 9;
+      transition: opacity 220ms ease, visibility 220ms ease;
+    }
+
+    .login-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .login-card {
+      width: min(360px, 94vw);
+      background: var(--card);
+      border-radius: 14px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      box-shadow: var(--shadow);
+      animation: pop 220ms ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-card::after {
+      content: "";
+      position: absolute;
+      inset: -20% -20% auto auto;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(34, 211, 238, 0.2), transparent 55%);
+      filter: blur(14px);
+    }
+
+    .login-card h2 {
+      margin: 0 0 10px;
+    }
+
+    .login-card input {
+      margin-bottom: 12px;
+    }
+
+    .fade-in {
+      animation: fadeIn 260ms ease;
+    }
+
+    .shake {
+      animation: shake 400ms ease;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+
+    .toast {
+      position: fixed;
+      top: 22px;
+      right: 22px;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 12px 14px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(-10px);
+      pointer-events: none;
+      transition: opacity 180ms ease, transform 180ms ease, border-color 180ms ease;
+      z-index: 10;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success { border-color: rgba(52, 211, 153, 0.35); }
+    .toast.info { border-color: rgba(34, 211, 238, 0.35); }
+
+    .flash {
+      animation: flash 880ms ease;
+    }
+
+    @keyframes flash {
+      0% { color: var(--accent); }
+      50% { color: var(--accent-2); }
+      100% { color: var(--text); }
+    }
+
+    .splash {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 50% 30%, rgba(34, 211, 238, 0.18), rgba(15, 23, 42, 0.96));
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms ease;
+      z-index: 11;
+    }
+
+    .splash.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .splash-inner {
+      text-align: center;
+      color: #e8f4ff;
+      text-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+      animation: fadeIn 360ms ease, glow 1.6s ease-in-out infinite;
+      padding: 18px 26px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+
+    .splash-text {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin: 0;
+      line-height: 1.3;
+      text-transform: uppercase;
+      animation: popIn 420ms ease forwards;
+    }
+
+    @keyframes glow {
+      0%, 100% { filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.45)); }
+      50% { filter: drop-shadow(0 0 20px rgba(167, 139, 250, 0.55)); }
+    }
+
+    @keyframes popIn {
+      0% { transform: translateY(12px) scale(0.94); opacity: 0; }
+      60% { transform: translateY(-6px) scale(1.02); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      table { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="app">
+      <header>
+        <div>
+          <div class="tag">Dashboard Mahasiswa</div>
+          <h1>Data Mahasiswa</h1>
+          <div class="status" id="statusText">Silakan tambah, urutkan, atau edit data.</div>
+        </div>
+        <button id="logoutBtn" class="muted-btn" type="button">Logout</button>
+      </header>
+
+      <div class="grid">
+        <div class="card fade-in">
+          <h3 style="margin-top:0">Tambah / Edit Data</h3>
+          <form id="studentForm">
+            <input type="hidden" id="editIndex" value="" />
+            <label>Nama
+              <input id="name" type="text" placeholder="Nama lengkap" required />
+            </label>
+            <label>NIM
+              <input id="nim" type="text" placeholder="NIM" required />
+            </label>
+            <label>Jurusan
+              <input id="major" type="text" placeholder="Jurusan" required />
+            </label>
+            <label>Email
+              <input id="email" type="email" placeholder="email@student.ac.id" required />
+            </label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="submit" id="submitBtn">Simpan</button>
+              <button type="button" id="resetBtn" class="muted-btn">Reset</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card fade-in">
+          <h3 style="margin-top:0">Urutkan</h3>
+          <div style="display:grid; gap:10px;">
+            <label>Kolom
+              <select id="sortField">
+                <option value="name">Nama</option>
+                <option value="nim">NIM</option>
+                <option value="major">Jurusan</option>
+                <option value="email">Email</option>
+              </select>
+            </label>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" id="ascBtn">Ascending</button>
+              <button type="button" id="descBtn" class="muted-btn">Descending</button>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <small class="muted" style="color:var(--muted)">Klik header tabel untuk toggle urutan juga.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card fade-in" style="margin-top:14px;">
+        <div class="table-wrap">
+          <table id="studentTable">
+            <thead>
+              <tr>
+                <th data-field="name"><span>Nama <span class="sort-indicator">⇅</span></span></th>
+                <th data-field="nim"><span>NIM <span class="sort-indicator">⇅</span></span></th>
+                <th data-field="major"><span>Jurusan <span class="sort-indicator">⇅</span></span></th>
+                <th data-field="email"><span>Email <span class="sort-indicator">⇅</span></span></th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card" id="loginCard">
+      <h2>Masuk</h2>
+      <p class="status" id="loginStatus">Silakan masukkan password Anda.</p>
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button id="loginBtn">Login</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast info" aria-live="polite"></div>
+
+  <div class="splash" id="welcomeSplash" aria-hidden="true">
+    <div class="splash-inner">
+      <div class="splash-text">SELAMAT DATANG</div>
+    </div>
+  </div>
+
+  <div class="splash" id="farewellSplash" aria-hidden="true">
+    <div class="splash-inner">
+      <div class="splash-text">SAMPAI JUMPA LAGI</div>
+    </div>
+  </div>
+
+  <script>
+    const PASSWORD = "rido123";
+    let students = [
+      { name: "Rido Saputra", nim: "23011001", major: "Teknik Informatika", email: "rido.saputra@example.com" },
+      { name: "Alya Pratiwi", nim: "23011002", major: "Sistem Informasi", email: "alya.pratiwi@example.com" },
+      { name: "Dimas Wiratama", nim: "23011003", major: "Teknik Komputer", email: "dimas.wira@example.com" },
+    ];
+    let sortField = "name";
+    let sortDirection = "asc"; // "asc" or "desc"
+
+    const tableBody = document.getElementById("tableBody");
+    const studentForm = document.getElementById("studentForm");
+    const editIndexInput = document.getElementById("editIndex");
+    const statusText = document.getElementById("statusText");
+    const submitBtn = document.getElementById("submitBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const sortFieldSelect = document.getElementById("sortField");
+    const ascBtn = document.getElementById("ascBtn");
+    const descBtn = document.getElementById("descBtn");
+    const loginOverlay = document.getElementById("loginOverlay");
+    const loginCard = document.getElementById("loginCard");
+    const loginStatus = document.getElementById("loginStatus");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginBtn = document.getElementById("loginBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const toastEl = document.getElementById("toast");
+    const welcomeSplash = document.getElementById("welcomeSplash");
+    const farewellSplash = document.getElementById("farewellSplash");
+    let toastTimer;
+
+    const nameInput = document.getElementById("name");
+    const nimInput = document.getElementById("nim");
+    const majorInput = document.getElementById("major");
+    const emailInput = document.getElementById("email");
+
+    function renderTable() {
+      const sorted = [...students].sort((a, b) => {
+        const valA = (a[sortField] || "").toString().toLowerCase();
+        const valB = (b[sortField] || "").toString().toLowerCase();
+        if (valA < valB) return sortDirection === "asc" ? -1 : 1;
+        if (valA > valB) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
+
+      tableBody.innerHTML = "";
+      sorted.forEach((student, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.nim}</td>
+          <td>${student.major}</td>
+          <td>${student.email}</td>
+          <td>
+            <div class="actions">
+              <button type="button" class="muted-btn" data-action="edit" data-index="${idx}">Edit</button>
+              <button type="button" class="muted-btn danger" data-action="delete" data-index="${idx}">Hapus</button>
+            </div>
+          </td>
+        `;
+        tr.querySelectorAll("button").forEach(btn => {
+          btn.addEventListener("click", (e) => handleAction(e, sorted, idx));
+        });
+        tableBody.appendChild(tr);
+      });
+
+      document.querySelectorAll("th").forEach(th => th.classList.remove("active"));
+      const activeHeader = document.querySelector(`th[data-field="${sortField}"]`);
+      if (activeHeader) {
+        activeHeader.classList.add("active");
+        activeHeader.querySelector(".sort-indicator").textContent = sortDirection === "asc" ? "↑" : "↓";
+      }
+    }
+
+    function handleAction(event, currentList, visualIndex) {
+      const action = event.target.dataset.action;
+      const student = currentList[visualIndex];
+      const realIndex = students.findIndex(s => s.nim === student.nim && s.email === student.email);
+      if (action === "delete") {
+        students.splice(realIndex, 1);
+        statusText.textContent = `Data ${student.name} dihapus.`;
+        renderTable();
+      }
+      if (action === "edit") {
+        editIndexInput.value = realIndex;
+        nameInput.value = student.name;
+        nimInput.value = student.nim;
+        majorInput.value = student.major;
+        emailInput.value = student.email;
+        submitBtn.textContent = "Update";
+        statusText.textContent = `Edit mode: ${student.name}`;
+        nameInput.focus();
+      }
+    }
+
+    studentForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const payload = {
+        name: nameInput.value.trim(),
+        nim: nimInput.value.trim(),
+        major: majorInput.value.trim(),
+        email: emailInput.value.trim(),
+      };
+      if (!payload.name || !payload.nim || !payload.major || !payload.email) {
+        statusText.textContent = "Lengkapi seluruh field.";
+        return;
+      }
+      const editIndex = editIndexInput.value;
+      if (editIndex !== "") {
+        students[Number(editIndex)] = payload;
+        statusText.textContent = `Data ${payload.name} diperbarui.`;
+      } else {
+        students.push(payload);
+        statusText.textContent = `Data ${payload.name} ditambahkan.`;
+      }
+      resetForm();
+      renderTable();
+    });
+
+    resetBtn.addEventListener("click", resetForm);
+
+    function resetForm() {
+      studentForm.reset();
+      editIndexInput.value = "";
+      submitBtn.textContent = "Simpan";
+      statusText.textContent = "Form direset.";
+    }
+
+    ascBtn.addEventListener("click", () => {
+      sortDirection = "asc";
+      sortField = sortFieldSelect.value;
+      renderTable();
+      statusText.textContent = `Diurutkan ${sortFieldSelect.options[sortFieldSelect.selectedIndex].text} secara ascending.`;
+    });
+
+    descBtn.addEventListener("click", () => {
+      sortDirection = "desc";
+      sortField = sortFieldSelect.value;
+      renderTable();
+      statusText.textContent = `Diurutkan ${sortFieldSelect.options[sortFieldSelect.selectedIndex].text} secara descending.`;
+    });
+
+    document.querySelectorAll("th[data-field]").forEach(th => {
+      th.addEventListener("click", () => {
+        const field = th.dataset.field;
+        if (sortField === field) {
+          sortDirection = sortDirection === "asc" ? "desc" : "asc";
+        } else {
+          sortField = field;
+          sortDirection = "asc";
+          sortFieldSelect.value = field;
+        }
+        renderTable();
+        statusText.textContent = `Kolom ${field} diurutkan ${sortDirection}.`;
+      });
+    });
+
+    function requireLogin() {
+      const token = sessionStorage.getItem("mahasiswa_authed");
+      if (token === "yes") {
+        loginOverlay.classList.add("hidden");
+        return;
+      }
+      loginOverlay.classList.remove("hidden");
+    }
+
+    loginBtn.addEventListener("click", checkPassword);
+    loginPassword.addEventListener("keyup", (e) => {
+      if (e.key === "Enter") checkPassword();
+    });
+    logoutBtn.addEventListener("click", () => {
+      sessionStorage.removeItem("mahasiswa_authed");
+      statusText.textContent = "Logout. Sampai jumpa lagi!";
+      flashStatus();
+      showToast("Sampai jumpa lagi!", "info");
+      showSplash("farewell", () => {
+        loginOverlay.classList.remove("hidden");
+        loginPassword.focus();
+      });
+    });
+
+    function checkPassword() {
+      const val = loginPassword.value.trim();
+      if (val === PASSWORD) {
+        sessionStorage.setItem("mahasiswa_authed", "yes");
+        loginOverlay.classList.add("hidden");
+        loginStatus.textContent = "Berhasil login.";
+        statusText.textContent = "Login berhasil. Selamat datang!";
+        flashStatus();
+        showToast("Selamat datang!", "success");
+        showSplash("welcome");
+      } else {
+        loginCard.classList.remove("shake");
+        void loginCard.offsetWidth; // restart animation
+        loginCard.classList.add("shake");
+        loginStatus.innerHTML = '<span class="danger">Password salah.</span>';
+        loginPassword.focus();
+      }
+    }
+
+    function showToast(message, type = "info") {
+      clearTimeout(toastTimer);
+      toastEl.textContent = message;
+      toastEl.className = `toast show ${type}`;
+      toastTimer = setTimeout(() => {
+        toastEl.classList.remove("show");
+      }, 2200);
+    }
+
+    function flashStatus() {
+      statusText.classList.remove("flash");
+      void statusText.offsetWidth;
+      statusText.classList.add("flash");
+    }
+
+    function showSplash(type, onDone) {
+      const target = type === "welcome" ? welcomeSplash : farewellSplash;
+      if (!target) return;
+      target.classList.add("show");
+      setTimeout(() => {
+        target.classList.remove("show");
+        if (onDone) onDone();
+      }, 1700);
+    }
+
+    // Initial render
+    renderTable();
+    requireLogin();
+  </script>
+</body>
+</html>
+
